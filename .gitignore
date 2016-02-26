@@ -1,3 +1,8 @@
+
+bin/
+tmp/
+roms/
+
 # Compiled Object files
 *.slo
 *.lo
@@ -13,9 +18,6 @@
 *.dylib
 *.dll
 
-# Fortran module files
-*.mod
-
 # Compiled Static libraries
 *.lai
 *.la
@@ -26,3 +28,13 @@
 *.exe
 *.out
 *.app
+
+# Visual Studio
+project/.vs/
+*.iobj
+*.ipdb
+*.pdb
+*.ilk
+*.opendb
+*.sdf
+*.vcxproj.user
