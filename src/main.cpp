@@ -1,27 +1,33 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include "Cartridge.h"
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-	sf::CircleShape shape(100.f);
-	shape.setFillColor(sf::Color::Green);
+	std::cout << "AlmostGB" << std::endl;
+	std::cout << "--------" << std::endl;
 
-	while (window.isOpen())
-	{
+	Cartridge rom;
+	if (!rom.load("tetris.gb")) {
+		std::cout << "Couldn't load ROM" << std::endl;
+	}
+
+	std::cout << rom.toString() << std::endl;
+
+	/*sf::RenderWindow window(sf::VideoMode(800, 600), "AlmostGB");
+
+	while (window.isOpen()) {
 		sf::Event event;
-		while (window.pollEvent(event))
-		{
-			if (event.type == sf::Event::Closed)
+		while (window.pollEvent(event)) {
+			if (event.type == sf::Event::Closed || 
+				sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 				window.close();
+			}
 		}
 
 		window.clear();
-		window.draw(shape);
 		window.display();
-	}
-
-	std::cout << "test\n";
+	}*/
 
 	return 0;
 }

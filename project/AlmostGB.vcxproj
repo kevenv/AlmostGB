@@ -19,7 +19,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\Cartridge.cpp" />
+    <ClCompile Include="..\src\CPU.cpp" />
+    <ClCompile Include="..\src\libs\cppformat\format.cc" />
+    <ClCompile Include="..\src\libs\cppformat\posix.cc" />
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\MMU.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\Cartridge.h" />
+    <ClInclude Include="..\src\CPU.h" />
+    <ClInclude Include="..\src\MMU.h" />
+    <ClInclude Include="..\src\utils.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D00B140E-03B8-47F9-9C54-0DE4EC4420CB}</ProjectGuid>
@@ -110,6 +121,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\src\libs\cppformat;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,6 +155,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\src\libs\cppformat;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
