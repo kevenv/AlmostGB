@@ -10,9 +10,9 @@ Cartridge::Cartridge()
 
 Cartridge::~Cartridge()
 {
-	if (m_buffer) {
-		delete[] m_buffer;
-		m_buffer = nullptr;
+	if (m_ROM) {
+		delete[] m_ROM;
+		m_ROM = nullptr;
 	}
 }
 
@@ -62,8 +62,8 @@ void Cartridge::parseHeader(std::ifstream& file)
 void Cartridge::loadROM(std::ifstream& file)
 {
 	const int size = getROMSizeKB() * 1024;
-	m_buffer = new u8[size];
-	file.read((char*)m_buffer, size);
+	m_ROM = new u8[size];
+	file.read((char*)m_ROM, size);
 }
 
 u8 Cartridge::read8(std::ifstream& file)
@@ -136,6 +136,7 @@ int Cartridge::getRAMSizeKB() const
 	case 0x01: return 2;
 	case 0x02: return 8;
 	case 0x03: return 32;
+	default: return 0; //can't happen
 	}
 }
 

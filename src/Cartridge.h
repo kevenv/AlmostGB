@@ -13,6 +13,9 @@ public:
 	std::string toString();
 
 	bool load(const std::string& filePath);
+	const u8* getROM() const { return m_ROM; }
+	u8* getRAM() { return m_RAM; }
+
 	int getRAMSizeKB() const;
 	int getROMSizeKB() const;
 	std::string getTypeStr() const;
@@ -20,7 +23,8 @@ public:
 	static const int HEADER_SIZE{ 336 };
 
 private:
-	u8* m_buffer{ nullptr };
+	u8* m_ROM{ nullptr };
+	u8* m_RAM{ nullptr };
 
 	u16 m_entryPoint[2]{ 0x0000 };
 	u8 m_nintendoLogo[48]{ 0x00 };
