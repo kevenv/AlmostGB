@@ -6,6 +6,9 @@
 #endif
 #include "MMU.h"
 
+#define SET_FLAG(n) F |= 1 << n;
+#define CLR_FLAG(n) F &= ~(1 << n);
+
 CPU::CPU()
 {
 
@@ -77,40 +80,85 @@ int CPU::tick()
 	//XOR n
 	case 0xAF:
 		A = A ^ A;
-		F = A == 0 ? 1 << 7 : 0;
+		if (A == 0) {
+			SET_FLAG(FLAG_Z);
+		}
+		else {
+			CLR_FLAG(FLAG_Z);
+		}
 		return 4;
 	case 0xA8:
 		A = A ^ B;
-		F = B == 0 ? 1 << 7 : 0;
+		if (A == 0) {
+			SET_FLAG(FLAG_Z);
+		}
+		else {
+			CLR_FLAG(FLAG_Z);
+		}
 		return 4;
 	case 0xA9:
 		A = A ^ C;
-		F = C == 0 ? 1 << 7 : 0;
+		if (A == 0) {
+			SET_FLAG(FLAG_Z);
+		}
+		else {
+			CLR_FLAG(FLAG_Z);
+		}
 		return 4;
 	case 0xAA:
 		A = A ^ D;
-		F = D == 0 ? 1 << 7 : 0;
+		if (A == 0) {
+			SET_FLAG(FLAG_Z);
+		}
+		else {
+			CLR_FLAG(FLAG_Z);
+		}
 		return 4;
 	case 0xAB:
 		A = A ^ E;
-		F = E == 0 ? 1 << 7 : 0;
+		if (A == 0) {
+			SET_FLAG(FLAG_Z);
+		}
+		else {
+			CLR_FLAG(FLAG_Z);
+		}
 		return 4;
 	case 0xAC:
 		A = A ^ H;
-		F = H == 0 ? 1 << 7 : 0;
+		if (A == 0) {
+			SET_FLAG(FLAG_Z);
+		}
+		else {
+			CLR_FLAG(FLAG_Z);
+		}
 		return 4;
 	case 0xAD:
 		A = A ^ L;
-		F = L == 0 ? 1 << 7 : 0;
+		if (A == 0) {
+			SET_FLAG(FLAG_Z);
+		}
+		else {
+			CLR_FLAG(FLAG_Z);
+		}
 		return 4;
 	case 0xAE:
-		A = A ^ HL;
-		F = HL == 0 ? 1 << 7 : 0;
+		A = A ^ m_MMU->read8(HL);
+		if (A == 0) {
+			SET_FLAG(FLAG_Z);
+		}
+		else {
+			CLR_FLAG(FLAG_Z);
+		}
 		return 8;
 	case 0xEE:
 		n8 = m_MMU->read8(PC++);
 		A = A ^ n8;
-		F = n8 == 0 ? 1 << 7 : 0;
+		if (A == 0) {
+			SET_FLAG(FLAG_Z);
+		}
+		else {
+			CLR_FLAG(FLAG_Z);
+		}
 		return 8;
 
 	//JP nn nn

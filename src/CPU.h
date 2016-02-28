@@ -36,6 +36,14 @@ public:
 	static const int MAX_CYCLES_PER_FRAME{ 69905 };
 
 private:
+	enum FLAG
+	{
+		FLAG_Z = 7,
+		FLAG_N = 6,
+		FLAG_H = 5,
+		FLAG_C = 4
+	};
+
 	//Registers
 	u16 PC;
 	u16 SP;
