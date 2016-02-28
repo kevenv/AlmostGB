@@ -1,0 +1,15 @@
+JP nn C3 12
+
+JP NZ, nn C2 12
+JP Z, nn CA 12
+JP NC, nn D2 12
+JP C, nn DA 12
+
+JP ( HL) E9 4
+
+JR n 18 8
+
+JR NZ, * 20 8
+JR Z, * 28 8
+JR NC, * 30 8
+JR C, * 38 8

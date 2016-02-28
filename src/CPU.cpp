@@ -179,9 +179,7 @@ int CPU::tick()
 std::string CPU::opToString(u8 op)
 {
 	switch (op) {
-	case 0x00: return "NOP";
-	case 0xC3: return "JP nn nn";
-	case 0xAF: return "xor A";
+	#include "gen/opcodes_str.cpp"
 	default: return "Unknown instruction";
 	}
 }

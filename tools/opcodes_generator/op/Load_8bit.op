@@ -1,0 +1,105 @@
+LD B, n 06 8
+LD C, n 0E 8
+LD D, n 16 8
+LD E, n 1E 8
+LD H, n 26 8
+LD L, n 2E 8
+
+LD A, A 7F 4
+LD A, B 78 4
+LD A, C 79 4
+LD A, D 7A 4
+LD A, E 7B 4
+LD A, H 7C 4
+LD A, L 7D 4
+LD A, ( HL) 7E 8
+LD B, B 40 4
+LD B, C 41 4
+LD B, D 42 4
+LD B, E 43 4
+LD B, H 44 4
+LD B, L 45 4
+LD B, ( HL) 46 8
+LD C, B 48 4
+LD C, C 49 4
+LD C, D 4A 4
+LD C, E 4B 4
+LD C, H 4C 4
+LD C, L 4D 4
+LD C, ( HL) 4E 8
+LD D, B 50 4
+LD D, C 51 4
+LD D, D 52 4
+LD D, E 53 4
+LD D, H 54 4
+LD D, L 55 4
+LD D, ( HL) 56 8
+LD E, B 58 4
+LD E, C 59 4
+LD E, D 5A 4
+LD E, E 5B 4
+LD E, H 5C 4
+LD E, L 5D 4
+LD E, ( HL) 5E 8
+LD H, B 60 4
+LD H, C 61 4
+LD H, D 62 4
+LD H, E 63 4
+LD H, H 64 4
+LD H, L 65 4
+LD H, ( HL) 66 8
+LD L, B 68 4
+LD L, C 69 4
+LD L, D 6A 4
+LD L, E 6B 4
+LD L, H 6C 4
+LD L, L 6D 4
+LD L, ( HL) 6E 8
+LD ( HL) , B 70 8
+LD ( HL) , C 71 8
+LD ( HL) , D 72 8
+LD ( HL) , E 73 8
+LD ( HL) , H 74 8
+LD ( HL) , L 75 8
+LD ( HL) , n 36 12
+
+LD A, A 7F 4
+LD A, B 78 4
+LD A, C 79 4
+LD A, D 7A 4
+LD A, E 7B 4
+LD A, H 7C 4
+LD A, L 7D 4
+LD A, ( BC) 0A 8
+LD A, ( DE) 1A 8
+LD A, ( HL) 7E 8
+LD A, ( nn) FA 16
+LD A, # 3E 8
+
+LD A, A 7F 4
+LD B, A 47 4
+LD C, A 4F 4
+LD D, A 57 4
+LD E, A 5F 4
+LD H, A 67 4
+LD L, A 6F 4
+LD ( BC) , A 02 8
+LD ( DE) , A 12 8
+LD ( HL) , A 77 8
+LD ( nn) , A EA 16
+
+LD A, ( C) F2 8
+
+LD ( $FF00+C) , A E2 8
+
+LDD A, ( HL) 3A 8
+
+LDD ( HL) , A 32 8
+
+LDI A, ( HL) 2A 8
+
+LDI ( HL) , A 22 8
+
+LD ( $FF00+n) , A E0 12
+
+LD A, ( $FF00+n) F0 12
