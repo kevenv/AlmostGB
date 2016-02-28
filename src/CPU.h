@@ -18,7 +18,8 @@ class MMU;
 		=
 		4194304 / 60 = 69905 cycles / frame
 
-	opcode size : 1 byte
+	opcode size : 1 byte: xx
+				  2 bytes: CB xx
 	instruction size : 1-3 bytes
 */
 
@@ -42,8 +43,8 @@ private:
 	union {
 		u16 AF;
 		struct {
+			u8 F; //Flags
 			u8 A; //Accumulator
-			//u8 F; //make sure we don't accidently overwrite F..
 		};
 	};
 
@@ -63,29 +64,28 @@ private:
 		 if result last rot/shift has shifted-out 1 bit
 	N,H: DAA instruction (see doc)
 	*/
-	u8 F;
 
 	union {
 		u16 BC;
 		struct {
-			u8 B;
 			u8 C;
+			u8 B;
 		};
 	};
 
 	union {
 		u16 DE;
 		struct {
-			u8 D;
 			u8 E;
+			u8 D;
 		};
 	};
 
 	union {
 		u16 HL;
 		struct {
-			u8 H;
 			u8 L;
+			u8 H;
 		};
 	};
 
