@@ -7,6 +7,16 @@
 #endif
 #include "utils.h"
 
+class CPU;
+typedef int(CPU::*FctPtr)(void);
+
+struct Opcode
+{
+	FctPtr impl;
+};
+
+#define NB_OPCODES 512
+
 class MMU;
 
 /*
@@ -96,6 +106,10 @@ private:
 			u8 H;
 		};
 	};
+
+	static const Opcode opcodes[NB_OPCODES];
+
+	#include "opcodes.h"
 
 	MMU* m_MMU{ nullptr };
 

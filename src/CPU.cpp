@@ -64,114 +64,28 @@ void CPU::reset()
 
 int CPU::tick()
 {
+	int cycles = 0;
 	u8 n8 = 0;
 	u16 n16 = 0;
-
+	
 	u8 op = m_MMU->read8(PC++);
+	if (op == 0xCB) {
+		op = m_MMU->read8(PC++);
+		cycles = (this->*CPU::opcodes[256 + op].impl)();
+	}
+	else {
+		cycles = (this->*CPU::opcodes[op].impl)();
+	}
+
 #ifdef CPU_LOG
 	std::cout << fmt::format("EXEC ({:#x}) {}", op, opToString(op)) << std::endl;
-#endif
-	switch (op) {
 
-	//NOP
-	case 0x00:
-		return 4;
-
-	//XOR n
-	case 0xAF:
-		A = A ^ A;
-		if (A == 0) {
-			SET_FLAG(FLAG_Z);
-		}
-		else {
-			CLR_FLAG(FLAG_Z);
-		}
-		return 4;
-	case 0xA8:
-		A = A ^ B;
-		if (A == 0) {
-			SET_FLAG(FLAG_Z);
-		}
-		else {
-			CLR_FLAG(FLAG_Z);
-		}
-		return 4;
-	case 0xA9:
-		A = A ^ C;
-		if (A == 0) {
-			SET_FLAG(FLAG_Z);
-		}
-		else {
-			CLR_FLAG(FLAG_Z);
-		}
-		return 4;
-	case 0xAA:
-		A = A ^ D;
-		if (A == 0) {
-			SET_FLAG(FLAG_Z);
-		}
-		else {
-			CLR_FLAG(FLAG_Z);
-		}
-		return 4;
-	case 0xAB:
-		A = A ^ E;
-		if (A == 0) {
-			SET_FLAG(FLAG_Z);
-		}
-		else {
-			CLR_FLAG(FLAG_Z);
-		}
-		return 4;
-	case 0xAC:
-		A = A ^ H;
-		if (A == 0) {
-			SET_FLAG(FLAG_Z);
-		}
-		else {
-			CLR_FLAG(FLAG_Z);
-		}
-		return 4;
-	case 0xAD:
-		A = A ^ L;
-		if (A == 0) {
-			SET_FLAG(FLAG_Z);
-		}
-		else {
-			CLR_FLAG(FLAG_Z);
-		}
-		return 4;
-	case 0xAE:
-		A = A ^ m_MMU->read8(HL);
-		if (A == 0) {
-			SET_FLAG(FLAG_Z);
-		}
-		else {
-			CLR_FLAG(FLAG_Z);
-		}
-		return 8;
-	case 0xEE:
-		n8 = m_MMU->read8(PC++);
-		A = A ^ n8;
-		if (A == 0) {
-			SET_FLAG(FLAG_Z);
-		}
-		else {
-			CLR_FLAG(FLAG_Z);
-		}
-		return 8;
-
-	//JP nn nn
-	case 0xC3:
-		PC = m_MMU->read16(PC);
-		return 16;
-
-	default:
-#ifdef CPU_LOG
-		std::cout << fmt::format("EXEC ERROR ({:#x}) {}: {}", op, opToString(op), "unimplemented instruction") << std::endl;
-#endif
-		return 0;
+	if (cycles == 0) {
+		std::cout << fmt::format("EXEC ERROR ({:#x}): {}", op, "unimplemented instruction") << std::endl;
 	}
+#endif
+
+	return cycles;
 }
 
 #ifdef CPU_LOG
@@ -185,3 +99,5 @@ std::string CPU::opToString(u8 op)
 }
 
 #endif
+
+#include "opcodes.cpp"
