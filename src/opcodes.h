@@ -8,6 +8,9 @@ void LDI();
 void LDI_ind();
 void LDD();
 void LDD_ind();
+void JP_addr();
+int JR_cond(u8 cond);
+void DEC(u8& dst);
 
 int opcodeUnknown();
 

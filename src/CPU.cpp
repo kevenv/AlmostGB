@@ -6,8 +6,9 @@
 #endif
 #include "MMU.h"
 
-#define SET_FLAG(n) F |= 1 << n;
-#define CLR_FLAG(n) F &= ~(1 << n);
+#define SET_FLAG(n) F |= 1 << n
+#define CLR_FLAG(n) F &= ~(1 << n)
+#define CHK_FLAG(n) ((F >> n) & 1)
 
 CPU::CPU()
 {
