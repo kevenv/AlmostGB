@@ -88,6 +88,231 @@ void CPU::DEC(u8& dst)
 	dst = result;
 }
 
+void CPU::SET(u8& dst, u8 b)
+{
+	dst |= 1 << b;
+}
+
+void CPU::SET(u16 addr, u8 b)
+{
+	u8 value = m_MMU->read8(addr);
+	SET(value, b);
+	m_MMU->write8(addr, value);
+}
+
+void CPU::RES(u8& dst, u8 b)
+{
+	dst &= ~(1 << b);
+}
+
+void CPU::RES(u16 addr, u8 b)
+{
+	u8 value = m_MMU->read8(addr);
+	RES(value, b);
+	m_MMU->write8(addr, value);
+}
+
+void CPU::BIT(u8 src, u8 b)
+{
+	u8 bit = (src >> b) & 1;
+
+	u8 carryFlag = CHK_FLAG(FLAG_C);
+	F = 0;
+	if (bit == 0) {
+		SET_FLAG(FLAG_Z);
+	}
+	CLR_FLAG(FLAG_N);
+	SET_FLAG(FLAG_H);
+	F |= carryFlag;
+}
+
+void CPU::BIT(u16 addr, u8 b)
+{
+	u8 value = m_MMU->read8(addr);
+	BIT(value, b);
+}
+
+void CPU::SWAP(u8& dst)
+{
+	u8 lo = dst & 0x0F;
+	u8 hi = (dst & 0xF0) >> 4;
+	dst = (lo << 4) | hi;
+
+	F = 0;
+	if (dst == 0) {
+		SET_FLAG(FLAG_Z);
+	}
+}
+
+void CPU::SWAP(u16 addr)
+{
+	u8 value = m_MMU->read8(addr);
+	SWAP(value);
+	m_MMU->write8(addr, value);
+}
+
+void CPU::SRL(u8& dst)
+{
+	u8 LSB = dst & 0x01;
+	dst >>= 1;
+
+	F = 0;
+	if (dst == 0) {
+		SET_FLAG(FLAG_Z);
+	}
+	CLR_FLAG(FLAG_N);
+	CLR_FLAG(FLAG_H);
+	if (LSB == 1) {
+		SET_FLAG(FLAG_C);
+	}
+}
+
+void CPU::SRL(u16 addr)
+{
+	u8 value = m_MMU->read8(addr);
+	SRL(value);
+	m_MMU->write8(addr, value);
+}
+
+void CPU::SLA(u8& dst)
+{
+	u8 MSB = (dst & 0x80) >> 7;
+	dst <<= 1;
+
+	F = 0;
+	if (dst == 0) {
+		SET_FLAG(FLAG_Z);
+	}
+	CLR_FLAG(FLAG_N);
+	CLR_FLAG(FLAG_H);
+	if (MSB == 1) {
+		SET_FLAG(FLAG_C);
+	}
+}
+
+void CPU::SLA(u16 addr)
+{
+	u8 value = m_MMU->read8(addr);
+	SLA(value);
+	m_MMU->write8(addr, value);
+}
+
+void CPU::SRA(u8& dst)
+{
+	u8 LSB = dst & 0x01;
+	u8 MSB = dst & 0x80;
+	dst = MSB | (dst >> 1);
+
+	F = 0;
+	if (dst == 0) {
+		SET_FLAG(FLAG_Z);
+	}
+	CLR_FLAG(FLAG_N);
+	CLR_FLAG(FLAG_H);
+	if (LSB == 1) {
+		SET_FLAG(FLAG_C);
+	}
+}
+
+void CPU::SRA(u16 addr)
+{
+	u8 value = m_MMU->read8(addr);
+	SRA(value);
+	m_MMU->write8(addr, value);
+}
+
+void CPU::RL(u8& dst)
+{
+	u8 MSB = (dst & 0x80) >> 7;
+	dst = (dst << 1) | CHK_FLAG(FLAG_C);
+
+	F = 0;
+	if (dst == 0) {
+		SET_FLAG(FLAG_Z);
+	}
+	CLR_FLAG(FLAG_N);
+	CLR_FLAG(FLAG_H);
+	if (MSB == 1) {
+		SET_FLAG(FLAG_C);
+	}
+}
+
+void CPU::RL(u16 addr)
+{
+	u8 value = m_MMU->read8(addr);
+	RL(value);
+	m_MMU->write8(addr, value);
+}
+
+void CPU::RLC(u8& dst)
+{
+	u8 MSB = (dst & 0x80) >> 7;
+	dst = (dst << 1) | MSB;
+
+	F = 0;
+	if (dst == 0) {
+		SET_FLAG(FLAG_Z);
+	}
+	CLR_FLAG(FLAG_N);
+	CLR_FLAG(FLAG_H);
+	if (MSB == 1) {
+		SET_FLAG(FLAG_C);
+	}
+}
+
+void CPU::RLC(u16 addr)
+{
+	u8 value = m_MMU->read8(addr);
+	RLC(value);
+	m_MMU->write8(addr, value);
+}
+
+void CPU::RR(u8& dst)
+{
+	u8 LSB = dst & 0x01;
+	dst = (CHK_FLAG(FLAG_C) << 7) | (dst >> 1);
+
+	F = 0;
+	if (dst == 0) {
+		SET_FLAG(FLAG_Z);
+	}
+	CLR_FLAG(FLAG_N);
+	CLR_FLAG(FLAG_H);
+	if (LSB == 1) {
+		SET_FLAG(FLAG_C);
+	}
+}
+
+void CPU::RR(u16 addr)
+{
+	u8 value = m_MMU->read8(addr);
+	RR(value);
+	m_MMU->write8(addr, value);
+}
+
+void CPU::RRC(u8& dst)
+{
+	u8 LSB = dst & 0x01;
+	dst = (LSB << 7) | (dst >> 1);
+
+	F = 0;
+	if (dst == 0) {
+		SET_FLAG(FLAG_Z);
+	}
+	CLR_FLAG(FLAG_N);
+	CLR_FLAG(FLAG_H);
+	if (LSB == 1) {
+		SET_FLAG(FLAG_C);
+	}
+}
+
+void CPU::RRC(u16 addr)
+{
+	u8 value = m_MMU->read8(addr);
+	RRC(value);
+	m_MMU->write8(addr, value);
+}
+
 int CPU::opcodeUnknown()
 {
 	return 0;
@@ -1094,1300 +1319,532 @@ int CPU::opcodeFF()
 //CB Prefix
 
 
-int CPU::opcodeCB00()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB01()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB02()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB03()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB04()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB05()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB06()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB07()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB08()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB09()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB0A()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB0B()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB0C()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB0D()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB0E()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB0F()
-{
-	return opcodeUnknown();
-}
-
-
-int CPU::opcodeCB10()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB11()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB12()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB13()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB14()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB15()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB16()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB17()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB18()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB19()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB1A()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB1B()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB1C()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB1D()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB1E()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB1F()
-{
-	return opcodeUnknown();
-}
-
-
-int CPU::opcodeCB20()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB21()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB22()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB23()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB24()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB25()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB26()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB27()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB28()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB29()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB2A()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB2B()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB2C()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB2D()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB2E()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB2F()
-{
-	return opcodeUnknown();
-}
-
-
-int CPU::opcodeCB30()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB31()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB32()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB33()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB34()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB35()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB36()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB37()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB38()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB39()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB3A()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB3B()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB3C()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB3D()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB3E()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB3F()
-{
-	return opcodeUnknown();
-}
-
-
-int CPU::opcodeCB40()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB41()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB42()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB43()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB44()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB45()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB46()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB47()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB48()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB49()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB4A()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB4B()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB4C()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB4D()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB4E()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB4F()
-{
-	return opcodeUnknown();
-}
-
-
-int CPU::opcodeCB50()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB51()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB52()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB53()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB54()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB55()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB56()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB57()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB58()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB59()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB5A()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB5B()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB5C()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB5D()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB5E()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB5F()
-{
-	return opcodeUnknown();
-}
-
-
-int CPU::opcodeCB60()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB61()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB62()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB63()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB64()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB65()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB66()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB67()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB68()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB69()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB6A()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB6B()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB6C()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB6D()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB6E()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB6F()
-{
-	return opcodeUnknown();
-}
-
-
-int CPU::opcodeCB70()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB71()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB72()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB73()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB74()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB75()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB76()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB77()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB78()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB79()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB7A()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB7B()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB7C()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB7D()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB7E()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB7F()
-{
-	return opcodeUnknown();
-}
-
-
-int CPU::opcodeCB80()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB81()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB82()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB83()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB84()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB85()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB86()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB87()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB88()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB89()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB8A()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB8B()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB8C()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB8D()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB8E()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB8F()
-{
-	return opcodeUnknown();
-}
-
-
-int CPU::opcodeCB90()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB91()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB92()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB93()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB94()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB95()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB96()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB97()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB98()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB99()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB9A()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB9B()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB9C()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB9D()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB9E()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCB9F()
-{
-	return opcodeUnknown();
-}
-
-
-int CPU::opcodeCBA0()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBA1()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBA2()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBA3()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBA4()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBA5()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBA6()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBA7()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBA8()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBA9()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBAA()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBAB()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBAC()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBAD()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBAE()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBAF()
-{
-	return opcodeUnknown();
-}
-
-
-int CPU::opcodeCBB0()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBB1()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBB2()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBB3()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBB4()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBB5()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBB6()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBB7()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBB8()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBB9()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBBA()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBBB()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBBC()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBBD()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBBE()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBBF()
-{
-	return opcodeUnknown();
-}
-
-
-int CPU::opcodeCBC0()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBC1()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBC2()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBC3()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBC4()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBC5()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBC6()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBC7()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBC8()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBC9()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBCA()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBCB()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBCC()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBCD()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBCE()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBCF()
-{
-	return opcodeUnknown();
-}
-
-
-int CPU::opcodeCBD0()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBD1()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBD2()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBD3()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBD4()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBD5()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBD6()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBD7()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBD8()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBD9()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBDA()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBDB()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBDC()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBDD()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBDE()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBDF()
-{
-	return opcodeUnknown();
-}
-
-
-int CPU::opcodeCBE0()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBE1()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBE2()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBE3()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBE4()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBE5()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBE6()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBE7()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBE8()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBE9()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBEA()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBEB()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBEC()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBED()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBEE()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBEF()
-{
-	return opcodeUnknown();
-}
-
-
-int CPU::opcodeCBF0()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBF1()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBF2()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBF3()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBF4()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBF5()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBF6()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBF7()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBF8()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBF9()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBFA()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBFB()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBFC()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBFD()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBFE()
-{
-	return opcodeUnknown();
-}
-
-int CPU::opcodeCBFF()
-{
-	return opcodeUnknown();
-}
+int CPU::opcodeCB00() { RLC(B); return 8; }
+
+int CPU::opcodeCB01() { RLC(C); return 8; }
+
+int CPU::opcodeCB02() { RLC(D); return 8; }
+
+int CPU::opcodeCB03() { RLC(E); return 8; }
+
+int CPU::opcodeCB04() { RLC(H); return 8; }
+
+int CPU::opcodeCB05() { RLC(L); return 8; }
+
+int CPU::opcodeCB06() { RLC(HL); return 16; }
+
+int CPU::opcodeCB07() { RLC(A); return 8; }
+
+int CPU::opcodeCB08() { RRC(B); return 8; }
+
+int CPU::opcodeCB09() { RRC(C); return 8; }
+
+int CPU::opcodeCB0A() { RRC(D); return 8; }
+
+int CPU::opcodeCB0B() { RRC(E); return 8; }
+
+int CPU::opcodeCB0C() { RRC(H); return 8; }
+
+int CPU::opcodeCB0D() { RRC(L); return 8; }
+
+int CPU::opcodeCB0E() { RRC(HL); return 16; }
+
+int CPU::opcodeCB0F() { RRC(A); return 8; }
+
+
+int CPU::opcodeCB10() { RL(B); return 8; }
+
+int CPU::opcodeCB11() { RL(C); return 8; }
+
+int CPU::opcodeCB12() { RL(D); return 8; }
+
+int CPU::opcodeCB13() { RL(E); return 8; }
+
+int CPU::opcodeCB14() { RL(H); return 8; }
+
+int CPU::opcodeCB15() { RL(L); return 8; }
+
+int CPU::opcodeCB16() { RL(HL); return 16; }
+
+int CPU::opcodeCB17() { RL(A); return 8; }
+
+int CPU::opcodeCB18() { RR(B); return 8; }
+
+int CPU::opcodeCB19() { RR(C); return 8; }
+
+int CPU::opcodeCB1A() { RR(D); return 8; }
+
+int CPU::opcodeCB1B() { RR(E); return 8; }
+
+int CPU::opcodeCB1C() { RR(H); return 8; }
+
+int CPU::opcodeCB1D() { RR(L); return 8; }
+
+int CPU::opcodeCB1E() { RR(HL); return 16; }
+
+int CPU::opcodeCB1F() { RR(A); return 8; }
+
+
+int CPU::opcodeCB20() { SLA(B); return 8; }
+
+int CPU::opcodeCB21() { SLA(C); return 8; }
+
+int CPU::opcodeCB22() { SLA(D); return 8; }
+
+int CPU::opcodeCB23() { SLA(E); return 8; }
+
+int CPU::opcodeCB24() { SLA(H); return 8; }
+
+int CPU::opcodeCB25() { SLA(L); return 8; }
+
+int CPU::opcodeCB26() { SLA(HL); return 16; }
+
+int CPU::opcodeCB27() { SLA(A); return 8; }
+
+int CPU::opcodeCB28() { SRA(B); return 8; }
+
+int CPU::opcodeCB29() { SRA(C); return 8; }
+
+int CPU::opcodeCB2A() { SRA(D); return 8; }
+
+int CPU::opcodeCB2B() { SRA(E); return 8; }
+
+int CPU::opcodeCB2C() { SRA(H); return 8; }
+
+int CPU::opcodeCB2D() { SRA(L); return 8; }
+
+int CPU::opcodeCB2E() { SRA(HL); return 16; }
+
+int CPU::opcodeCB2F() { SRA(A); return 8; }
+
+
+int CPU::opcodeCB30() { SWAP(B); return 8; }
+
+int CPU::opcodeCB31() { SWAP(C); return 8; }
+
+int CPU::opcodeCB32() { SWAP(D); return 8; }
+
+int CPU::opcodeCB33() { SWAP(E); return 8; }
+
+int CPU::opcodeCB34() { SWAP(H); return 8; }
+
+int CPU::opcodeCB35() { SWAP(L); return 8; }
+
+int CPU::opcodeCB36() { SWAP(HL); return 16; }
+
+int CPU::opcodeCB37() { SWAP(A); return 8; }
+
+int CPU::opcodeCB38() { SRL(B); return 8; }
+
+int CPU::opcodeCB39() { SRL(C); return 8; }
+
+int CPU::opcodeCB3A() { SRL(D); return 8; }
+
+int CPU::opcodeCB3B() { SRL(E); return 8; }
+
+int CPU::opcodeCB3C() { SRL(H); return 8; }
+
+int CPU::opcodeCB3D() { SRL(L); return 8; }
+
+int CPU::opcodeCB3E() { SRL(HL); return 16; }
+
+int CPU::opcodeCB3F() { SRL(A); return 8; }
+
+
+int CPU::opcodeCB40() { BIT(B, 0); return 8; }
+
+int CPU::opcodeCB41() { BIT(C, 0); return 8; }
+
+int CPU::opcodeCB42() { BIT(D, 0); return 8; }
+
+int CPU::opcodeCB43() { BIT(E, 0); return 8; }
+
+int CPU::opcodeCB44() { BIT(H, 0); return 8; }
+
+int CPU::opcodeCB45() { BIT(L, 0); return 8; }
+
+int CPU::opcodeCB46() { BIT(HL, 0); return 16; }
+
+int CPU::opcodeCB47() { BIT(A, 0); return 8; }
+
+int CPU::opcodeCB48() { BIT(B, 1); return 8; }
+
+int CPU::opcodeCB49() { BIT(C, 1); return 8; }
+
+int CPU::opcodeCB4A() { BIT(D, 1); return 8; }
+
+int CPU::opcodeCB4B() { BIT(E, 1); return 8; }
+
+int CPU::opcodeCB4C() { BIT(H, 1); return 8; }
+
+int CPU::opcodeCB4D() { BIT(L, 1); return 8; }
+
+int CPU::opcodeCB4E() { BIT(HL, 1); return 16; }
+
+int CPU::opcodeCB4F() { BIT(A, 1); return 8; }
+
+
+int CPU::opcodeCB50() { BIT(B, 2); return 8; }
+
+int CPU::opcodeCB51() { BIT(C, 2); return 8; }
+
+int CPU::opcodeCB52() { BIT(D, 2); return 8; }
+
+int CPU::opcodeCB53() { BIT(E, 2); return 8; }
+
+int CPU::opcodeCB54() { BIT(H, 2); return 8; }
+
+int CPU::opcodeCB55() { BIT(L, 2); return 8; }
+
+int CPU::opcodeCB56() { BIT(HL, 2); return 16; }
+
+int CPU::opcodeCB57() { BIT(A, 2); return 8; }
+
+int CPU::opcodeCB58() { BIT(B, 3); return 8; }
+
+int CPU::opcodeCB59() { BIT(C, 3); return 8; }
+
+int CPU::opcodeCB5A() { BIT(D, 3); return 8; }
+
+int CPU::opcodeCB5B() { BIT(E, 3); return 8; }
+
+int CPU::opcodeCB5C() { BIT(H, 3); return 8; }
+
+int CPU::opcodeCB5D() { BIT(L, 3); return 8; }
+
+int CPU::opcodeCB5E() { BIT(HL, 3); return 16; }
+
+int CPU::opcodeCB5F() { BIT(A, 3); return 8; }
+
+
+int CPU::opcodeCB60() { BIT(B, 4); return 8; }
+
+int CPU::opcodeCB61() { BIT(C, 4); return 8; }
+
+int CPU::opcodeCB62() { BIT(D, 4); return 8; }
+
+int CPU::opcodeCB63() { BIT(E, 4); return 8; }
+
+int CPU::opcodeCB64() { BIT(H, 4); return 8; }
+
+int CPU::opcodeCB65() { BIT(L, 4); return 8; }
+
+int CPU::opcodeCB66() { BIT(HL, 4); return 16; }
+
+int CPU::opcodeCB67() { BIT(A, 4); return 8; }
+
+int CPU::opcodeCB68() { BIT(B, 5); return 8; }
+
+int CPU::opcodeCB69() { BIT(C, 5); return 8; }
+
+int CPU::opcodeCB6A() { BIT(D, 5); return 8; }
+
+int CPU::opcodeCB6B() { BIT(E, 5); return 8; }
+
+int CPU::opcodeCB6C() { BIT(H, 5); return 8; }
+
+int CPU::opcodeCB6D() { BIT(L, 5); return 8; }
+
+int CPU::opcodeCB6E() { BIT(HL, 5); return 16; }
+
+int CPU::opcodeCB6F() { BIT(A, 5); return 8; }
+
+
+int CPU::opcodeCB70() { BIT(B, 6); return 8; }
+
+int CPU::opcodeCB71() { BIT(C, 6); return 8; }
+
+int CPU::opcodeCB72() { BIT(D, 6); return 8; }
+
+int CPU::opcodeCB73() { BIT(E, 6); return 8; }
+
+int CPU::opcodeCB74() { BIT(H, 6); return 8; }
+
+int CPU::opcodeCB75() { BIT(L, 6); return 8; }
+
+int CPU::opcodeCB76() { BIT(HL, 6); return 16; }
+
+int CPU::opcodeCB77() { BIT(A, 6); return 8; }
+
+int CPU::opcodeCB78() { BIT(B, 7); return 8; }
+
+int CPU::opcodeCB79() { BIT(C, 7); return 8; }
+
+int CPU::opcodeCB7A() { BIT(D, 7); return 8; }
+
+int CPU::opcodeCB7B() { BIT(E, 7); return 8; }
+
+int CPU::opcodeCB7C() { BIT(H, 7); return 8; }
+
+int CPU::opcodeCB7D() { BIT(L, 7); return 8; }
+
+int CPU::opcodeCB7E() { BIT(HL, 7); return 16; }
+
+int CPU::opcodeCB7F() { BIT(A, 7); return 8; }
+
+
+int CPU::opcodeCB80() { RES(B, 0); return 8; }
+
+int CPU::opcodeCB81() { RES(C, 0); return 8; }
+
+int CPU::opcodeCB82() { RES(D, 0); return 8; }
+
+int CPU::opcodeCB83() { RES(E, 0); return 8; }
+
+int CPU::opcodeCB84() { RES(H, 0); return 8; }
+
+int CPU::opcodeCB85() { RES(L, 0); return 8; }
+
+int CPU::opcodeCB86() { RES(HL, 0); return 16; }
+
+int CPU::opcodeCB87() { RES(A, 0); return 8; }
+
+int CPU::opcodeCB88() { RES(B, 1); return 8; }
+
+int CPU::opcodeCB89() { RES(C, 1); return 8; }
+
+int CPU::opcodeCB8A() { RES(D, 1); return 8; }
+
+int CPU::opcodeCB8B() { RES(E, 1); return 8; }
+
+int CPU::opcodeCB8C() { RES(H, 1); return 8; }
+
+int CPU::opcodeCB8D() { RES(L, 1); return 8; }
+
+int CPU::opcodeCB8E() { RES(HL, 1); return 16; }
+
+int CPU::opcodeCB8F() { RES(A, 1); return 8; }
+
+
+int CPU::opcodeCB90() { RES(B, 2); return 8; }
+
+int CPU::opcodeCB91() { RES(C, 2); return 8; }
+
+int CPU::opcodeCB92() { RES(D, 2); return 8; }
+
+int CPU::opcodeCB93() { RES(E, 2); return 8; }
+
+int CPU::opcodeCB94() { RES(H, 2); return 8; }
+
+int CPU::opcodeCB95() { RES(L, 2); return 8; }
+
+int CPU::opcodeCB96() { RES(HL, 2); return 16; }
+
+int CPU::opcodeCB97() { RES(A, 2); return 8; }
+
+int CPU::opcodeCB98() { RES(B, 3); return 8; }
+
+int CPU::opcodeCB99() { RES(C, 3); return 8; }
+
+int CPU::opcodeCB9A() { RES(D, 3); return 8; }
+
+int CPU::opcodeCB9B() { RES(E, 3); return 8; }
+
+int CPU::opcodeCB9C() { RES(H, 3); return 8; }
+
+int CPU::opcodeCB9D() { RES(L, 3); return 8; }
+
+int CPU::opcodeCB9E() { RES(HL, 3); return 16; }
+
+int CPU::opcodeCB9F() { RES(A, 3); return 8; }
+
+
+int CPU::opcodeCBA0() { RES(B, 4); return 8; }
+
+int CPU::opcodeCBA1() { RES(C, 4); return 8; }
+
+int CPU::opcodeCBA2() { RES(D, 4); return 8; }
+
+int CPU::opcodeCBA3() { RES(E, 4); return 8; }
+
+int CPU::opcodeCBA4() { RES(H, 4); return 8; }
+
+int CPU::opcodeCBA5() { RES(L, 4); return 8; }
+
+int CPU::opcodeCBA6() { RES(HL, 4); return 16; }
+
+int CPU::opcodeCBA7() { RES(A, 4); return 8; }
+
+int CPU::opcodeCBA8() { RES(B, 5); return 8; }
+
+int CPU::opcodeCBA9() { RES(C, 5); return 8; }
+
+int CPU::opcodeCBAA() { RES(D, 5); return 8; }
+
+int CPU::opcodeCBAB() { RES(E, 5); return 8; }
+
+int CPU::opcodeCBAC() { RES(H, 5); return 8; }
+
+int CPU::opcodeCBAD() { RES(L, 5); return 8; }
+
+int CPU::opcodeCBAE() { RES(HL, 5); return 16; }
+
+int CPU::opcodeCBAF() { RES(A, 5); return 8; }
+
+
+int CPU::opcodeCBB0() { RES(B, 6); return 8; }
+
+int CPU::opcodeCBB1() { RES(C, 6); return 8; }
+
+int CPU::opcodeCBB2() { RES(D, 6); return 8; }
+
+int CPU::opcodeCBB3() { RES(E, 6); return 8; }
+
+int CPU::opcodeCBB4() { RES(H, 6); return 8; }
+
+int CPU::opcodeCBB5() { RES(L, 6); return 8; }
+
+int CPU::opcodeCBB6() { RES(HL, 6); return 16; }
+
+int CPU::opcodeCBB7() { RES(A, 6); return 8; }
+
+int CPU::opcodeCBB8() { RES(B, 7); return 8; }
+
+int CPU::opcodeCBB9() { RES(C, 7); return 8; }
+
+int CPU::opcodeCBBA() { RES(D, 7); return 8; }
+
+int CPU::opcodeCBBB() { RES(E, 7); return 8; }
+
+int CPU::opcodeCBBC() { RES(H, 7); return 8; }
+
+int CPU::opcodeCBBD() { RES(L, 7); return 8; }
+
+int CPU::opcodeCBBE() { RES(HL, 7); return 16; }
+
+int CPU::opcodeCBBF() { RES(A, 7); return 8; }
+
+
+int CPU::opcodeCBC0() { SET(B, 0); return 8; }
+
+int CPU::opcodeCBC1() { SET(C, 0); return 8; }
+
+int CPU::opcodeCBC2() { SET(D, 0); return 8; }
+
+int CPU::opcodeCBC3() { SET(E, 0); return 8; }
+
+int CPU::opcodeCBC4() { SET(H, 0); return 8; }
+
+int CPU::opcodeCBC5() { SET(L, 0); return 8; }
+
+int CPU::opcodeCBC6() { SET(HL, 0); return 16; }
+
+int CPU::opcodeCBC7() { SET(A, 0); return 8; }
+
+int CPU::opcodeCBC8() { SET(B, 1); return 8; }
+
+int CPU::opcodeCBC9() { SET(C, 1); return 8; }
+
+int CPU::opcodeCBCA() { SET(D, 1); return 8; }
+
+int CPU::opcodeCBCB() { SET(E, 1); return 8; }
+
+int CPU::opcodeCBCC() { SET(H, 1); return 8; }
+
+int CPU::opcodeCBCD() { SET(L, 1); return 8; }
+
+int CPU::opcodeCBCE() { SET(HL, 1); return 16; }
+
+int CPU::opcodeCBCF() { SET(A, 1); return 8; }
+
+
+int CPU::opcodeCBD0() { SET(B, 2); return 8; }
+
+int CPU::opcodeCBD1() { SET(C, 2); return 8; }
+
+int CPU::opcodeCBD2() { SET(D, 2); return 8; }
+
+int CPU::opcodeCBD3() { SET(E, 2); return 8; }
+
+int CPU::opcodeCBD4() { SET(H, 2); return 8; }
+
+int CPU::opcodeCBD5() { SET(L, 2); return 8; }
+
+int CPU::opcodeCBD6() { SET(HL, 2); return 16; }
+
+int CPU::opcodeCBD7() { SET(A, 2); return 8; }
+
+int CPU::opcodeCBD8() { SET(B, 3); return 8; }
+
+int CPU::opcodeCBD9() { SET(C, 3); return 8; }
+
+int CPU::opcodeCBDA() { SET(D, 3); return 8; }
+
+int CPU::opcodeCBDB() { SET(E, 3); return 8; }
+
+int CPU::opcodeCBDC() { SET(H, 3); return 8; }
+
+int CPU::opcodeCBDD() { SET(L, 3); return 8; }
+
+int CPU::opcodeCBDE() { SET(HL, 3); return 16; }
+
+int CPU::opcodeCBDF() { SET(A, 3); return 8; }
+
+
+int CPU::opcodeCBE0() { SET(B, 4); return 8; }
+
+int CPU::opcodeCBE1() { SET(C, 4); return 8; }
+
+int CPU::opcodeCBE2() { SET(D, 4); return 8; }
+
+int CPU::opcodeCBE3() { SET(E, 4); return 8; }
+
+int CPU::opcodeCBE4() { SET(H, 4); return 8; }
+
+int CPU::opcodeCBE5() { SET(L, 4); return 8; }
+
+int CPU::opcodeCBE6() { SET(HL, 4); return 16; }
+
+int CPU::opcodeCBE7() { SET(A, 4); return 8; }
+
+int CPU::opcodeCBE8() { SET(B, 5); return 8; }
+
+int CPU::opcodeCBE9() { SET(C, 5); return 8; }
+
+int CPU::opcodeCBEA() { SET(D, 5); return 8; }
+
+int CPU::opcodeCBEB() { SET(E, 5); return 8; }
+
+int CPU::opcodeCBEC() { SET(H, 5); return 8; }
+
+int CPU::opcodeCBED() { SET(L, 5); return 8; }
+
+int CPU::opcodeCBEE() { SET(HL, 5); return 16; }
+
+int CPU::opcodeCBEF() { SET(A, 5); return 8; }
+
+
+int CPU::opcodeCBF0() { SET(B, 6); return 8; }
+
+int CPU::opcodeCBF1() { SET(C, 6); return 8; }
+
+int CPU::opcodeCBF2() { SET(D, 6); return 8; }
+
+int CPU::opcodeCBF3() { SET(E, 6); return 8; }
+
+int CPU::opcodeCBF4() { SET(H, 6); return 8; }
+
+int CPU::opcodeCBF5() { SET(L, 6); return 8; }
+
+int CPU::opcodeCBF6() { SET(HL, 6); return 16; }
+
+int CPU::opcodeCBF7() { SET(A, 6); return 8; }
+
+int CPU::opcodeCBF8() { SET(B, 7); return 8; }
+
+int CPU::opcodeCBF9() { SET(C, 7); return 8; }
+
+int CPU::opcodeCBFA() { SET(D, 7); return 8; }
+
+int CPU::opcodeCBFB() { SET(E, 7); return 8; }
+
+int CPU::opcodeCBFC() { SET(H, 7); return 8; }
+
+int CPU::opcodeCBFD() { SET(L, 7); return 8; }
+
+int CPU::opcodeCBFE() { SET(HL, 7); return 16; }
+
+int CPU::opcodeCBFF() { SET(A, 7); return 8; }
 
 // Assign function pointers
 

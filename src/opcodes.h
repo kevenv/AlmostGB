@@ -12,6 +12,30 @@ void JP_addr();
 int JR_cond(u8 cond);
 void DEC(u8& dst);
 
+//Prefix CB
+void SET(u8& dst, u8 b);
+void SET(u16 addr, u8 b);
+void RES(u8& dst, u8 b);
+void RES(u16 addr, u8 b);
+void BIT(u8 src, u8 b);
+void BIT(u16 addr, u8 b);
+void SWAP(u8& dst);
+void SWAP(u16 addr);
+void SRL(u8& dst);
+void SRL(u16 addr);
+void SLA(u8& dst);
+void SLA(u16 addr);
+void SRA(u8& dst);
+void SRA(u16 addr);
+void RL(u8& dst);
+void RL(u16 addr);
+void RLC(u8& dst);
+void RLC(u16 addr);
+void RR(u8& dst);
+void RR(u16 addr);
+void RRC(u8& dst);
+void RRC(u16 addr);
+
 int opcodeUnknown();
 
 int opcode00();
