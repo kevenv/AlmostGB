@@ -31,8 +31,16 @@ void INC_8_ind(u16 addr);
 void DEC_8(u8& dst);
 void DEC_8_ind(u16 addr);
 
+//Jumps
+int CALL(bool condition = true);
+int RET(bool condition = true);
+int RETI();
+int RST(u8 addr);
 void JP_addr();
 int JR_cond(u8 cond);
+
+//Misc
+void EI();
 
 //Prefix CB
 void SET(u8& dst, u8 b);

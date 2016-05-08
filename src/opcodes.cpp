@@ -262,6 +262,52 @@ void CPU::DEC_8_ind(u16 addr)
 	m_MMU->write8(addr, result);
 }
 
+int CPU::CALL(bool condition)
+{
+	u16 addr = m_MMU->read16(PC);
+	PC += 2;
+	if (condition) {
+		PUSH(PC+1);
+		PC = addr;
+		return 24;
+	}
+	else {
+		return 12;
+	}
+}
+
+int CPU::RET(bool condition)
+{
+	if (condition) {
+		u16 addr;
+		POP(addr);
+		PC = addr;
+		return 20;
+	}
+	else {
+		return 8;
+	}
+}
+
+int CPU::RETI()
+{
+	RET();
+	EI();
+	return 16;
+}
+
+int CPU::RST(u8 addr)
+{
+	PUSH(PC+1);
+	PC = 0x0000 + addr;
+	return 16;
+}
+
+void CPU::EI()
+{
+	opcodeUnknown();
+}
+
 void CPU::JP_addr()
 {
 	PC = m_MMU->read16(PC);
@@ -736,11 +782,7 @@ int CPU::opcode44() { LD_8(B, H); return 4; }
 
 int CPU::opcode45() { LD_8(B, L); return 4; }
 
-int CPU::opcode46()
-{
-	return opcodeUnknown();
-}
-//{ LD_8reg(B, m_MMU->read8(HL)); return 8; }
+int CPU::opcode46() { LD_8_ind(B, HL); return 8; }
 
 int CPU::opcode47() { LD_8(B, A); return 4; }
 
@@ -773,11 +815,7 @@ int CPU::opcode54() { LD_8(D, H); return 4; }
 
 int CPU::opcode55() { LD_8(D, L); return 4; }
 
-int CPU::opcode56()
-{
-	return opcodeUnknown();
-}
-// { LD_8reg(D, m_MMU->read8(HL)); return 8; }
+int CPU::opcode56() { LD_8_ind(D, HL); return 8; }
 
 int CPU::opcode57() { LD_8(D, A); return 4; }
 
@@ -810,11 +848,7 @@ int CPU::opcode64() { LD_8(H, H); return 4; }
 
 int CPU::opcode65() { LD_8(H, L); return 4; }
 
-int CPU::opcode66() 
-{
-	return opcodeUnknown();
-}
-//{ LD_8reg(H, m_MMU->read8(HL)); return 8; }
+int CPU::opcode66() { LD_8_ind(H, HL); return 8; }
 
 int CPU::opcode67() { LD_8(H, A); return 4; }
 
@@ -1003,10 +1037,7 @@ int CPU::opcodeBE() { CP_8(m_MMU->read8(HL)); return 8; }
 int CPU::opcodeBF() { CP_8(A); return 4; }
 
 
-int CPU::opcodeC0()
-{
-	return opcodeUnknown();
-}
+int CPU::opcodeC0() { return RET(!CHK_FLAG(FLAG_Z)); }
 
 int CPU::opcodeC1() { POP(BC); return 12; }
 
@@ -1021,29 +1052,17 @@ int CPU::opcodeC3()
 	return 16;
 }
 
-int CPU::opcodeC4()
-{
-	return opcodeUnknown();
-}
+int CPU::opcodeC4() { return CALL(!CHK_FLAG(FLAG_Z)); }
 
 int CPU::opcodeC5() { PUSH(BC); return 16; }
 
 int CPU::opcodeC6() { ADD_8(m_MMU->read8(PC++)); return 8; }
 
-int CPU::opcodeC7()
-{
-	return opcodeUnknown();
-}
+int CPU::opcodeC7() { return RST(0x00); }
 
-int CPU::opcodeC8()
-{
-	return opcodeUnknown();
-}
+int CPU::opcodeC8() { return RET(CHK_FLAG(FLAG_Z)); }
 
-int CPU::opcodeC9()
-{
-	return opcodeUnknown();
-}
+int CPU::opcodeC9() { RET(); return 16; }
 
 int CPU::opcodeCA()
 {
@@ -1055,25 +1074,16 @@ int CPU::opcodeCB()
 	return opcodeUnknown();
 }
 
-int CPU::opcodeCC()
-{
-	return opcodeUnknown();
-}
+int CPU::opcodeCC() { return CALL(CHK_FLAG(FLAG_Z)); }
 
-int CPU::opcodeCD()
-{
-	return opcodeUnknown();
-}
+int CPU::opcodeCD() { return CALL(); }
 
 int CPU::opcodeCE() { ADC_8(m_MMU->read8(PC++)); return 8; }
 
-int CPU::opcodeCF() { SBC_8(m_MMU->read8(PC++)); return 8; }
+int CPU::opcodeCF() { return RST(0x08); }
 
 
-int CPU::opcodeD0()
-{
-	return opcodeUnknown();
-}
+int CPU::opcodeD0() { return RET(!CHK_FLAG(FLAG_C)); }
 
 int CPU::opcodeD1() { POP(DE); return 12; }
 
@@ -1087,29 +1097,17 @@ int CPU::opcodeD3()
 	return opcodeUnknown();
 }
 
-int CPU::opcodeD4()
-{
-	return opcodeUnknown();
-}
+int CPU::opcodeD4() { return CALL(!CHK_FLAG(FLAG_C)); }
 
 int CPU::opcodeD5() { PUSH(DE); return 16; }
 
 int CPU::opcodeD6() { SUB_8(m_MMU->read8(PC++)); return 8; }
 
-int CPU::opcodeD7()
-{
-	return opcodeUnknown();
-}
+int CPU::opcodeD7() { return RST(0x10); }
 
-int CPU::opcodeD8()
-{
-	return opcodeUnknown();
-}
+int CPU::opcodeD8() { return RET(CHK_FLAG(FLAG_C)); }
 
-int CPU::opcodeD9()
-{
-	return opcodeUnknown();
-}
+int CPU::opcodeD9() { return RETI(); }
 
 int CPU::opcodeDA()
 {
@@ -1121,25 +1119,16 @@ int CPU::opcodeDB()
 	return opcodeUnknown();
 }
 
-int CPU::opcodeDC()
-{
-	return opcodeUnknown();
-}
+int CPU::opcodeDC() { return CALL(CHK_FLAG(FLAG_C)); }
 
 int CPU::opcodeDD()
 {
 	return opcodeUnknown();
 }
 
-int CPU::opcodeDE()
-{
-	return opcodeUnknown();
-}
+int CPU::opcodeDE() { SBC_8(m_MMU->read8(PC++)); return 8; }
 
-int CPU::opcodeDF()
-{
-	return opcodeUnknown();
-}
+int CPU::opcodeDF() { return RST(0x18); }
 
 
 int CPU::opcodeE0() { LDH(); return 12; }
@@ -1162,10 +1151,7 @@ int CPU::opcodeE5() { PUSH(HL); return 16; }
 
 int CPU::opcodeE6() { AND_8(m_MMU->read8(PC++)); return 8; }
 
-int CPU::opcodeE7()
-{
-	return opcodeUnknown();
-}
+int CPU::opcodeE7() { return RST(0x20); }
 
 int CPU::opcodeE8()
 {
@@ -1196,10 +1182,7 @@ int CPU::opcodeED()
 
 int CPU::opcodeEE() { XOR_8(m_MMU->read8(PC++)); return 8; }
 
-int CPU::opcodeEF()
-{
-	return opcodeUnknown();
-}
+int CPU::opcodeEF() { return RST(0x28); }
 
 
 int CPU::opcodeF0() { LDH_ind(); return 12; }
@@ -1222,10 +1205,7 @@ int CPU::opcodeF5() { PUSH(AF); return 16; }
 
 int CPU::opcodeF6() { OR_8(m_MMU->read8(PC++)); return 8; }
 
-int CPU::opcodeF7()
-{
-	return opcodeUnknown();
-}
+int CPU::opcodeF7() { return RST(0x30); }
 
 int CPU::opcodeF8() { LDHL(); return 12; }
 
@@ -1256,10 +1236,7 @@ int CPU::opcodeFD()
 
 int CPU::opcodeFE() { CP_8(m_MMU->read8(PC++)); return 8; }
 
-int CPU::opcodeFF()
-{
-	return opcodeUnknown();
-}
+int CPU::opcodeFF() { return RST(0x38); }
 
 
 //CB Prefix
