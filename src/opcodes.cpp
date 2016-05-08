@@ -401,7 +401,20 @@ int CPU::SCF()
 
 int CPU::DAA()
 {
-	opcodeUnknown();
+	//A  = 00-99 -> 9 | 9
+	if (A == 0) SET_FLAG(FLAG_Z);
+	if (A > 99) {
+		SET_FLAG(FLAG_C);
+	}
+	u8 tmp = 0;
+	while (A > 0) {
+		tmp <<= 4;
+		tmp |= A % 10;
+		A /= 10;
+	}
+	A = tmp;
+	CLR_FLAG(FLAG_H);
+	return 4;
 }
 
 void CPU::EI()
