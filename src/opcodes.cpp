@@ -72,11 +72,9 @@ void CPU::PUSH(u16 src)
 void CPU::POP(u16& dst)
 {
 	u8 hi;
-	hi = m_MMU->read8(SP);
-	SP++;
+	hi = m_MMU->read8(++SP);
 	u8 lo;
-	lo = m_MMU->read8(SP);
-	SP++;
+	lo = m_MMU->read8(++SP);
 	dst = (hi << 8) | lo;
 }
 
