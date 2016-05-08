@@ -109,6 +109,10 @@ void MMU::write8(u16 address, u8 value)
 		write_memory(MEMORY_MAP::UNUSED, address, 0xFEA0, value);
 	}
 	else if (address >= 0xFF00 && address < 0xFF80) {
+		if (address == 0xFF01) {
+			//Serial link com
+			std::cout << (char)(value) << std::endl;
+		}
 		write_memory(MEMORY_MAP::IO, address, 0xFF00, value);
 	}
 	else if (address >= 0xFF80 && address < 0xFFFF) {

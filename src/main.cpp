@@ -10,8 +10,9 @@ int main()
 	std::cout << "--------" << std::endl;
 
 	Cartridge cartridge;
-	if (!cartridge.load("tetris.gb")) {
+	if (!cartridge.load("cpu_instrs.gb")) {
 		std::cout << "Couldn't load ROM" << std::endl;
+		return 0;
 	}
 
 	std::cout << cartridge.toString() << std::endl;

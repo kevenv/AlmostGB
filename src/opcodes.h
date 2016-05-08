@@ -1,13 +1,21 @@
 
-void XOR(u8 src);
-void LD_16bit(u16& dst);
-void LD_8imm(u8& dst);
-void LD_8_ind(u16 addr, u8 src);
-void LD_8reg(u8& dst, u8 src);
+void LD_8(u8& dst, u8 src); //1 8reg 8reg
+void LD_8(u16 addr, u8 src); //2 16reg 8reg
+void LD_8_ind(u8& dst, u16 addr); //3 8reg ind
 void LDI();
 void LDI_ind();
 void LDD();
 void LDD_ind();
+void LDH();
+void LDH_ind();
+
+void LD_16(u16& dst, u16 src);
+void LD_16_SP();
+void LDHL();
+void PUSH(u16 src);
+void POP(u16& dst);
+
+void XOR(u8 src);
 void JP_addr();
 int JR_cond(u8 cond);
 void DEC(u8& dst);

@@ -38,6 +38,7 @@ project/.vs/
 *.opendb
 *.sdf
 *.vcxproj.user
+*.db
 
 # Python
 tools/opcodes_generator/impl/

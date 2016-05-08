@@ -1,7 +1,7 @@
 #pragma once
 
 #define MEMORY_DEBUG
-#define MEMORY_LOG
+//#define MEMORY_LOG
 
 #if defined(MEMORY_DEBUG) || defined(MEMORY_LOG)
 #include <string>
