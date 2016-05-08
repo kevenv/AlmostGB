@@ -37,6 +37,12 @@ int DEC_16(u16& dst);
 int ADD_16(u16& dst, u16 src);
 int ADD_16_SP();
 
+//Rotate & Shifts
+int RLCA();
+int RLA();
+int RRCA();
+int RRA();
+
 //Jumps
 int CALL(bool condition = true);
 int RET(bool condition = true);
@@ -48,6 +54,10 @@ int JP_ind(u16 addr);
 int JR(bool condition);
 
 //Misc
+int CPL();
+int CCF();
+int SCF();
+int DAA();
 void EI();
 
 //Prefix CB
