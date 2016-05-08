@@ -26,10 +26,13 @@ void AND_8(u8 src);
 void XOR_8(u8 src);
 void OR_8(u8 src);
 void CP_8(u8 src);
+void INC(u8& dst);
+void INC_ind(u16 addr);
+void DEC(u8& dst);
+void DEC_ind(u16 addr);
 
 void JP_addr();
 int JR_cond(u8 cond);
-void DEC(u8& dst);
 
 //Prefix CB
 void SET(u8& dst, u8 b);
