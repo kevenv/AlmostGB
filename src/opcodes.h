@@ -36,8 +36,10 @@ int CALL(bool condition = true);
 int RET(bool condition = true);
 int RETI();
 int RST(u8 addr);
-void JP_addr();
-int JR_cond(u8 cond);
+int JP();
+int JP(bool condition);
+int JP_ind(u16 addr);
+int JR(bool condition);
 
 //Misc
 void EI();
