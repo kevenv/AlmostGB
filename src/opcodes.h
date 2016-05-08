@@ -26,10 +26,10 @@ void AND_8(u8 src);
 void XOR_8(u8 src);
 void OR_8(u8 src);
 void CP_8(u8 src);
-void INC(u8& dst);
-void INC_ind(u16 addr);
-void DEC(u8& dst);
-void DEC_ind(u16 addr);
+void INC_8(u8& dst);
+void INC_8_ind(u16 addr);
+void DEC_8(u8& dst);
+void DEC_8_ind(u16 addr);
 
 void JP_addr();
 int JR_cond(u8 cond);

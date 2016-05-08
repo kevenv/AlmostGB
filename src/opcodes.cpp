@@ -208,7 +208,7 @@ void CPU::CP_8(u8 src)
 	}
 }
 
-void CPU::INC(u8& dst)
+void CPU::INC_8(u8& dst)
 {
 	u8 result = dst + 1;
 
@@ -221,7 +221,7 @@ void CPU::INC(u8& dst)
 	dst = result;
 }
 
-void CPU::INC_ind(u16 addr)
+void CPU::INC_8_ind(u16 addr)
 {
 	u8 result = m_MMU->read8(addr) + 1;
 
@@ -234,7 +234,7 @@ void CPU::INC_ind(u16 addr)
 	m_MMU->write8(addr, result);
 }
 
-void CPU::DEC(u8& dst)
+void CPU::DEC_8(u8& dst)
 {
 	u8 result = dst - 1;
 
@@ -248,7 +248,7 @@ void CPU::DEC(u8& dst)
 	dst = result;
 }
 
-void CPU::DEC_ind(u16 addr)
+void CPU::DEC_8_ind(u16 addr)
 {
 	u8 result = m_MMU->read8(addr) - 1;
 
@@ -528,9 +528,9 @@ int CPU::opcode03()
 	return opcodeUnknown();
 }
 
-int CPU::opcode04() { INC(B); return 4; }
+int CPU::opcode04() { INC_8(B); return 4; }
 
-int CPU::opcode05() { DEC(B); return 4; }
+int CPU::opcode05() { DEC_8(B); return 4; }
 
 int CPU::opcode06() { LD_8(B, m_MMU->read8(PC++)); return 8; }
 
@@ -553,9 +553,9 @@ int CPU::opcode0B()
 	return opcodeUnknown();
 }
 
-int CPU::opcode0C() { INC(C); return 4; }
+int CPU::opcode0C() { INC_8(C); return 4; }
 
-int CPU::opcode0D() { DEC(C); return 4; }
+int CPU::opcode0D() { DEC_8(C); return 4; }
 
 int CPU::opcode0E() { LD_8(C, m_MMU->read8(PC++)); return 8; }
 
@@ -579,9 +579,9 @@ int CPU::opcode13()
 	return opcodeUnknown();
 }
 
-int CPU::opcode14() { INC(C); return 4; }
+int CPU::opcode14() { INC_8(C); return 4; }
 
-int CPU::opcode15() { DEC(D); return 4; }
+int CPU::opcode15() { DEC_8(D); return 4; }
 
 int CPU::opcode16() { LD_8(D, m_MMU->read8(PC++)); return 8; }
 
@@ -607,9 +607,9 @@ int CPU::opcode1B()
 	return opcodeUnknown();
 }
 
-int CPU::opcode1C() { INC(E); return 4; }
+int CPU::opcode1C() { INC_8(E); return 4; }
 
-int CPU::opcode1D() { DEC(E); return 4; }
+int CPU::opcode1D() { DEC_8(E); return 4; }
 
 int CPU::opcode1E() { LD_8(E, m_MMU->read8(PC++)); return 8; }
 
@@ -630,9 +630,9 @@ int CPU::opcode23()
 	return opcodeUnknown();
 }
 
-int CPU::opcode24() { INC(H); return 4; }
+int CPU::opcode24() { INC_8(H); return 4; }
 
-int CPU::opcode25() { DEC(H); return 4; }
+int CPU::opcode25() { DEC_8(H); return 4; }
 
 int CPU::opcode26() { LD_8(H, m_MMU->read8(PC++)); return 8; }
 
@@ -658,9 +658,9 @@ int CPU::opcode2B()
 	return opcodeUnknown();
 }
 
-int CPU::opcode2C() { INC(L); return 4; }
+int CPU::opcode2C() { INC_8(L); return 4; }
 
-int CPU::opcode2D() { DEC(L); return 4; }
+int CPU::opcode2D() { DEC_8(L); return 4; }
 
 int CPU::opcode2E() { LD_8(L, m_MMU->read8(PC++)); return 8; }
 
@@ -684,9 +684,9 @@ int CPU::opcode33()
 	return opcodeUnknown();
 }
 
-int CPU::opcode34() { INC_ind(HL); return 12; }
+int CPU::opcode34() { INC_8_ind(HL); return 12; }
 
-int CPU::opcode35() { DEC_ind(HL); return 12; }
+int CPU::opcode35() { DEC_8_ind(HL); return 12; }
 
 int CPU::opcode36() { LD_8(HL, m_MMU->read8(PC++)); return 12; }
 
@@ -712,9 +712,9 @@ int CPU::opcode3B()
 	return opcodeUnknown();
 }
 
-int CPU::opcode3C() { INC(A); return 4; }
+int CPU::opcode3C() { INC_8(A); return 4; }
 
-int CPU::opcode3D() { DEC(A); return 4; }
+int CPU::opcode3D() { DEC_8(A); return 4; }
 
 int CPU::opcode3E() { LD_8(A, m_MMU->read8(PC++)); return 8; }
 
