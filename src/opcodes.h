@@ -1,4 +1,5 @@
 
+//Load 8 bits
 void LD_8(u8& dst, u8 src); //1 8reg 8reg
 void LD_8(u16 addr, u8 src); //2 16reg 8reg
 void LD_8_ind(u8& dst, u16 addr); //3 8reg ind
@@ -9,13 +10,23 @@ void LDD_ind();
 void LDH();
 void LDH_ind();
 
+//Load 16 bits
 void LD_16(u16& dst, u16 src);
 void LD_16_SP();
 void LDHL();
 void PUSH(u16 src);
 void POP(u16& dst);
 
-void XOR(u8 src);
+//Arith 8 bits
+void ADD_8(u8 src);
+void SUB_8(u8 src);
+void ADC_8(u8 src);
+void SBC_8(u8 src);
+void AND_8(u8 src);
+void XOR_8(u8 src);
+void OR_8(u8 src);
+void CP_8(u8 src);
+
 void JP_addr();
 int JR_cond(u8 cond);
 void DEC(u8& dst);
