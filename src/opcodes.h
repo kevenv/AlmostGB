@@ -31,6 +31,12 @@ void INC_8_ind(u16 addr);
 void DEC_8(u8& dst);
 void DEC_8_ind(u16 addr);
 
+//Arith 16 bits
+int INC_16(u16& dst);
+int DEC_16(u16& dst);
+int ADD_16(u16& dst, u16 src);
+int ADD_16_SP();
+
 //Jumps
 int CALL(bool condition = true);
 int RET(bool condition = true);
